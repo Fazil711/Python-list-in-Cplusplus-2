@@ -38,6 +38,9 @@ public:
 	T& operator [] (uint32_t index);
 	bool operator == (const List<T>& rhs) const;
 	bool operator != (const List<T>& rhs) const;
+	List<T>& operator = (const List<T>& clist);
+	List<T>& operator * (const uint32_t value);
+	List<T>& operator + (const List<T>& clist) const;
 
 	template<typename U>
 	friend std::ostream& operator << (std::ostream& ostr, const List<U>& clist);
@@ -87,6 +90,40 @@ std::ostream& operator << (std::ostream& ostr, const List<T>& clist) {
 	}
 	ostr << std::endl;
 	return ostr;
+}
+
+template<class T>
+List<T>& List<T>::operator * (const uint32_t value) {
+	List<T> temp;
+	for (uint32_t i = 0; i < value; ++i) {
+		temp.extend(*this);
+	}
+	*this = temp;
+	return *this;
+}
+
+template<class T>
+List<T>& List<T>::operator = (const List<T>& clist) {
+	if (clist.size > size) {
+		delete[] Array;
+		capacity = clist.size + 5;
+		Array = new T[capacity];
+	}
+	
+	for (uint32_t i = 0; i < clist.size; ++i) {
+		Array[i] = clist.Array[i];
+	}
+	size = clist.size;
+
+	return *this;
+}
+
+template<class T>
+List<T>& List<T>::operator+(const List<T>& clist) const{
+	List<T> temp;
+	temp.extend(*this);
+	temp.extend(clist);
+	return temp;
 }
 
 template<typename T>
