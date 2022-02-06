@@ -16,7 +16,9 @@ private:
 	void _merge_sort(T* Arr, int l, int m, int r);
 	void _tim_sort(T* Arr, int s);
 public:
+	//constructors
 	List();
+	List(List<T>&& clist);
 	~List();
 
 	//User methods
@@ -39,8 +41,9 @@ public:
 	bool operator == (const List<T>& rhs) const;
 	bool operator != (const List<T>& rhs) const;
 	List<T>& operator = (const List<T>& clist);
-	List<T>& operator * (const uint32_t value);
-	List<T>& operator + (const List<T>& clist) const;
+	List<T> operator * (const uint32_t value);
+	List<T> operator + (const List<T>& clist) const;
+
 
 	template<typename U>
 	friend std::ostream& operator << (std::ostream& ostr, const List<U>& clist);
@@ -83,23 +86,13 @@ bool List<T>::operator!=(const List<T>& rhs) const {
 	return !(*this == rhs);
 }
 
-template<typename T>
-std::ostream& operator << (std::ostream& ostr, const List<T>& clist) {
-	for (uint32_t i = 0; i < clist.size; i++) {
-		ostr << clist.Array[i] << " ";
-	}
-	ostr << std::endl;
-	return ostr;
-}
-
 template<class T>
-List<T>& List<T>::operator * (const uint32_t value) {
+List<T> List<T>::operator * (const uint32_t value) {
 	List<T> temp;
 	for (uint32_t i = 0; i < value; ++i) {
 		temp.extend(*this);
 	}
-	*this = temp;
-	return *this;
+	return temp;
 }
 
 template<class T>
@@ -119,11 +112,20 @@ List<T>& List<T>::operator = (const List<T>& clist) {
 }
 
 template<class T>
-List<T>& List<T>::operator+(const List<T>& clist) const{
+List<T> List<T>::operator+(const List<T>& clist) const{
 	List<T> temp;
 	temp.extend(*this);
 	temp.extend(clist);
 	return temp;
+}
+
+template<typename T>
+std::ostream& operator << (std::ostream& ostr, const List<T>& clist) {
+	for (uint32_t i = 0; i < clist.size; i++) {
+		ostr << clist.Array[i] << " ";
+	}
+	ostr << std::endl;
+	return ostr;
 }
 
 template<typename T>
@@ -248,6 +250,14 @@ T sum(const List<T>& clist) {
 template<class T>
 List<T>::List() : capacity(5), size(0), Array(new T[capacity]) {
 	//Nothing
+}
+
+template<class T>
+List<T>::List(List<T>&& clist) {
+	capacity = clist.capacity;
+	size = clist.size;
+	Array = clist.Array;
+	clist.Array = nullptr;
 }
 
 template<class T>
